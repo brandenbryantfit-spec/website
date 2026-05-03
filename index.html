@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supplement Protocol</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0A0A0E; }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: #060608; }
+  ::-webkit-scrollbar-thumb { background: #2A2C34; border-radius: 2px; }
+  input::placeholder { color: #2A2C34; }
+  button:focus { outline: none; }
+  a { color: #4A7FC1; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const BRAND = {
+  bg: "#0A0A0E", bgCard: "#0D0D12", bgDeep: "#060608",
+  blue: "#4A7FC1", silver: "#C8CDD6", white: "#EEF0F4",
+  dim: "#5A5E6A", dimmer: "#2A2C34", border: "#16181F", borderLight: "#1E2028",
+};
+
+const useWidth = () => {
+  const [w, setW] = useState(typeof window !== "undefined" ? window.innerWidth : 800);
+  useEffect(() => {
+    const handler = () => setW(window.innerWidth);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return w;
+};
+
+const SupplementIcon = ({ color, abbr, size = 40 }) => (
+  <svg width={size} height={size} viewBox="0 0 40 40" style={{ flexShrink: 0, borderRadius: 8, overflow: "visible" }}>
+    <rect width="40" height="40" rx="8" fill={color + "15"} stroke={color + "40"} strokeWidth="1"/>
+    <text x="20" y="26" textAnchor="middle" fontSize="13" fontWeight="700"
+      fontFamily="'Arial Black',sans-serif" fill={color} opacity="0.9">{abbr}</text>
+  </svg>
+);
+
+const BrandLogo = ({ size = 1, center = false }) => (
+  <div style={{ display:"flex", flexDirection:"column", alignItems: center ? "center" : "flex-start", gap: `${2*size}px` }}>
+    <div style={{ fontFamily:"'Arial Black','Impact',sans-serif", fontWeight:"900", lineHeight:1 }}>
+      <div style={{ fontSize:`${11*size}px`, letterSpacing:`${4*size}px`, color:BRAND.silver, textTransform:"uppercase", marginBottom:`${3*size}px` }}>BRANDEN BRYANT</div>
+      <div style={{ fontSize:`${22*size}px`, letterSpacing:`${2*size}px`, background:"linear-gradient(135deg,#EEF0F4 0%,#4A7FC1 60%,#C8CDD6 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", textTransform:"uppercase" }}>FITNESS</div>
+    </div>
+    <div style={{ width:`${32*size}px`, height:`${2*size}px`, background:"linear-gradient(90deg,#4A7FC1,transparent)" }} />
+    <div style={{ fontSize:`${7*size}px`, letterSpacing:`${3*size}px`, color:"#4A7FC1", fontFamily:"monospace", textTransform:"uppercase" }}>SUPPLEMENT PROTOCOL</div>
+  </div>
+);
+
+const supps = [
+  {
+    id:1, imgKey:"COLLAGEN", name:"Collagen Peptides", type:"Type I & III · Powder", brand:"Sports Research",
+    dose:"20g (1 scoop)", timing:"PRE-WORKOUT", timingColor:"#E8572A",
+    purpose:"Structural protein for joints, skin & connective tissue",
+    description:"Collagen Peptides are hydrolyzed for rapid absorption, providing the amino acid building blocks your body needs to repair and synthesize connective tissue. Taking collagen pre-workout — especially with Vitamin C — primes your tendons, ligaments, and skin for the mechanical stress of training.",
+    bullets:[
+      "Supports joint integrity and reduces exercise-related joint discomfort",
+      "Stimulates collagen synthesis in tendons and ligaments when taken pre-exercise",
+      "Provides glycine and proline — amino acids not found in muscle protein sources",
+      "Improves skin elasticity and hydration over time",
+      "Pairs synergistically with Vitamin C for maximum collagen production"
+    ],
+    protocol:"Take 20g mixed in water or juice 30–45 min before training. Always pair with Vitamin C to activate collagen synthesis pathways. On rest days, take first thing in the morning."
+  },
+  {
+    id:2, imgKey:"BIOCELL", name:"BioCell Collagen", type:"Type II · Capsules", brand:"NOW Foods",
+    dose:"2 capsules", timing:"PRE-WORKOUT", timingColor:"#E8572A",
+    purpose:"Joint cartilage & hyaluronic acid matrix support",
+    description:"BioCell Collagen is a clinically studied form of Type II collagen combined with chondroitin sulfate and hyaluronic acid. Unlike Type I/III collagen (found in skin and tendons), Type II collagen specifically targets joint cartilage — making this an ideal companion for athletes and active individuals.",
+    bullets:[
+      "Clinically studied to reduce joint discomfort and improve mobility",
+      "Contains hyaluronic acid to support joint lubrication",
+      "Provides chondroitin sulfate for cartilage matrix integrity",
+      "Unique hydrolyzed form ensures high bioavailability",
+      "Complements Type I/III collagen for full-spectrum joint support"
+    ],
+    protocol:"Take 2 capsules 30–45 min before training alongside your Type I/III collagen and Vitamin C stack. On rest days, take with breakfast."
+  },
+  {
+    id:3, imgKey:"VITC", name:"Vitamin C", type:"1000mg · Rose Hips", brand:"Nutricost",
+    dose:"1000mg", timing:"PRE-WORKOUT", timingColor:"#E8572A",
+    purpose:"Collagen cofactor, antioxidant & immune support",
+    description:"Vitamin C (ascorbic acid) is a critical cofactor in collagen biosynthesis — without it, your body cannot properly form the triple helix structure of collagen. Taking it alongside collagen pre-workout creates a powerful synergy that maximizes collagen synthesis during the post-exercise repair window.",
+    bullets:[
+      "Essential cofactor for procollagen hydroxylation — collagen can't form without it",
+      "Powerful antioxidant that neutralizes exercise-induced free radicals",
+      "Supports immune function during periods of heavy training",
+      "Rose hips provide additional bioflavonoids that enhance absorption",
+      "Reduces muscle soreness and supports faster recovery"
+    ],
+    protocol:"Take 1000mg with your pre-workout collagen stack 30–45 min before training. The Vitamin C + Collagen combination is one of the most evidence-backed supplement pairings for connective tissue health."
+  },
+  {
+    id:4, imgKey:"FISHOIL", name:"Omega-3 Fish Oil", type:"Triple Strength · 1250mg EPA/DHA", brand:"Nutricost",
+    dose:"2 softgels", timing:"MORNING W/ FOOD", timingColor:"#4A7FC1",
+    purpose:"Systemic inflammation control & cardiovascular health",
+    description:"Omega-3 fatty acids (EPA and DHA) are the cornerstone of any anti-inflammatory supplement stack. They directly compete with inflammatory omega-6 pathways, reducing the systemic inflammation that accumulates with intense training. Fish oil must be taken with fat-containing food for proper absorption.",
+    bullets:[
+      "EPA directly reduces systemic inflammation markers (CRP, IL-6)",
+      "DHA supports brain health, mood regulation, and cognitive function",
+      "Improves heart rate variability and cardiovascular efficiency",
+      "Reduces exercise-induced muscle damage and DOMS",
+      "Supports healthy triglyceride levels and vascular function"
+    ],
+    protocol:"Take 2 softgels with breakfast or your largest morning meal. Fat-soluble — must be taken with food containing dietary fat. Refrigerate after opening to prevent oxidation."
+  },
+  {
+    id:5, imgKey:"D3K2", name:"Vitamin D3 + K2", type:"5000 IU D3 · 100mcg K2 MK7", brand:"Nutricost",
+    dose:"1 capsule", timing:"EVENING / DINNER", timingColor:"#9A6AE8",
+    purpose:"Hormonal regulation, bone density & immune function",
+    description:"Vitamin D3 functions as a steroid hormone precursor regulating over 2,000 genes. K2 (MK-7) works synergistically by directing calcium into bones and away from arterial walls. Together they support testosterone production, immune resilience, bone mineral density, and muscle fiber development.",
+    bullets:[
+      "Supports testosterone synthesis and healthy hormonal balance",
+      "K2 MK-7 directs calcium to bones, preventing arterial calcification",
+      "Regulates immune function and reduces risk of respiratory illness",
+      "Deficiency is linked to reduced muscle strength and performance",
+      "Magnesium converts D3 to its active form — pair with evening magnesium"
+    ],
+    protocol:"Take 1 capsule with dinner. D3 requires magnesium for conversion to its active form — taking both at the same meal maximizes effectiveness. Fat-soluble, so take with a meal containing dietary fat."
+  },
+  {
+    id:6, imgKey:"TURMERIC", name:"Turmeric Curcumin", type:"1950mg · BioPerine", brand:"Nature's Nutrition",
+    dose:"2 capsules", timing:"EVENING / DINNER", timingColor:"#9A6AE8",
+    purpose:"Joint inflammation, recovery & cellular protection",
+    description:"Curcumin is the active compound in turmeric with powerful anti-inflammatory and antioxidant properties. On its own, curcumin has poor bioavailability — BioPerine (black pepper extract) increases absorption by up to 2,000%. Taking it with a fat-containing meal further enhances uptake.",
+    bullets:[
+      "Inhibits NF-kB pathway — one of the most powerful natural anti-inflammatories",
+      "BioPerine increases curcumin absorption by up to 2000%",
+      "Reduces exercise-induced oxidative stress and muscle damage",
+      "Supports healthy joint tissue and reduces post-training soreness",
+      "May support healthy cortisol metabolism during high stress phases"
+    ],
+    protocol:"Take 2 capsules with dinner. The fat in your evening meal enhances curcumin absorption significantly. BioPerine ensures maximum bioavailability. Do not take with prescription blood thinners without consulting a physician."
+  },
+  {
+    id:7, imgKey:"MAGNESIUM", name:"Magnesium Glycinate", type:"High Absorption · 240mg", brand:"Pure Encapsulations",
+    dose:"2 capsules (240mg)", timing:"BEFORE BED", timingColor:"#3A9E6B",
+    purpose:"Sleep quality, muscle recovery & nervous system repair",
+    description:"Magnesium glycinate is the most bioavailable form of magnesium — the glycine chelate enhances absorption and independently promotes relaxation by acting as an inhibitory neurotransmitter. Magnesium is essential for over 300 enzymatic reactions and is depleted rapidly through sweat during exercise.",
+    bullets:[
+      "Glycine chelate promotes deep sleep and nervous system calm",
+      "Required for ATP synthesis — the fundamental energy currency of cells",
+      "Activates Vitamin D3 to its biologically active form",
+      "Reduces muscle cramping and improves relaxation post-training",
+      "Supports healthy cortisol clearance during sleep"
+    ],
+    protocol:"Take 2 capsules 30–60 min before bed. The glycine component supports GABA activity and helps you fall asleep faster and stay in deeper sleep stages. Do not take on an empty stomach if sensitive."
+  },
+  {
+    id:8, imgKey:"ZINC", name:"Zinc Bisglycinate", type:"30mg · Highly Absorbable", brand:"Thorne",
+    dose:"1 capsule (30mg)", timing:"EVENING / DINNER", timingColor:"#9A6AE8",
+    purpose:"Testosterone support, immune function & protein synthesis",
+    description:"Zinc bisglycinate is the most absorbable chelated form of zinc, free from the GI side effects of zinc sulfate or oxide. Zinc is lost through sweat and is critical for testosterone production, immune defense, wound healing, and protein synthesis — making it an essential mineral for any athlete.",
+    bullets:[
+      "Required for testosterone synthesis via the HPG hormonal axis",
+      "Supports immune T-cell production and antiviral defense",
+      "Critical for protein synthesis and cellular repair",
+      "Bisglycinate form avoids the nausea associated with other zinc forms",
+      "Pairs with collagen glycine for enhanced overnight recovery"
+    ],
+    protocol:"Take 1 capsule with dinner. Do not take on an empty stomach. Avoid taking at the same time as calcium-rich foods which compete for absorption. The glycine in bisglycinate pairs well with the collagen amino acid profile."
+  },
+  {
+    id:9, imgKey:"CREATINE", name:"Creatine Monohydrate", type:"Micronized · 5g Pure", brand:"Optimum Nutrition",
+    dose:"5g (1 scoop)", timing:"ANYTIME DAILY", timingColor:"#2A9E8E",
+    purpose:"Power output, strength, cellular hydration & brain function",
+    description:"Creatine monohydrate is the single most researched performance supplement in existence with an unmatched safety profile. It works by replenishing phosphocreatine stores in muscle, enabling faster ATP regeneration during high-intensity efforts. Micronized form mixes instantly and is absorbed without loading.",
+    bullets:[
+      "Increases phosphocreatine availability for explosive power and strength",
+      "Most researched supplement with 40+ years of safety data",
+      "Supports cognitive function and neuroprotection via brain PCr stores",
+      "Enhances muscle cell volumization through intracellular water retention",
+      "No loading phase required — 5g daily achieves saturation within 4 weeks"
+    ],
+    protocol:"Take 5g daily at any consistent time — timing is secondary to daily consistency. Mix with juice or fast-digesting carbs post-workout to leverage insulin for uptake. Ensure adequate hydration (drink an extra 16–24oz water daily)."
+  },
+  {
+    id:10, imgKey:"WHEY", name:"Whey Protein", type:"Gold Standard 100% Whey", brand:"Optimum Nutrition",
+    dose:"1 scoop (~25g protein)", timing:"POST-WORKOUT", timingColor:"#E85757",
+    purpose:"Muscle protein synthesis trigger & recovery fuel",
+    description:"Whey protein isolate/concentrate provides a complete amino acid profile with the highest leucine content of any protein source. Leucine is the key anabolic trigger for muscle protein synthesis (MPS) via the mTOR pathway. Post-workout delivery maximizes the anabolic window when muscle fibers are primed for repair.",
+    bullets:[
+      "Highest leucine content of any protein source — the primary MPS trigger",
+      "Rapid digestion delivers amino acids within 30–60 min post-training",
+      "Complete amino acid profile including all essential amino acids",
+      "Whey isolate blend minimizes lactose for better digestibility",
+      "Pair with fast carbs to spike insulin and drive amino acid uptake"
+    ],
+    protocol:"Consume within 30–60 min post-workout. Mix 1 scoop in 8–12oz water or milk. Pair with a banana or fast carbohydrate source to maximize insulin-driven nutrient uptake. On rest days, use as a convenient protein source at any meal."
+  }
+];
+
+const schedule = [
+  { time:"PRE-WORKOUT", sub:"30-45 min before training", color:"#E8572A", items:[1,2,3], note:"Take collagen + Vitamin C together — Vitamin C activates collagen synthesis. Add 15–20g of carbs if training fasted." },
+  { time:"MORNING W/ FOOD", sub:"With breakfast", color:"#4A7FC1", items:[4], note:"Fat-soluble — must be taken with a meal containing dietary fat for proper absorption. Refrigerate softgels." },
+  { time:"POST-WORKOUT", sub:"Within 30-60 min", color:"#E85757", items:[10], note:"Or anytime as a protein source. Pair with fast carbs (banana, juice) to maximize the post-workout anabolic window." },
+  { time:"ANYTIME DAILY", sub:"Consistent daily use", color:"#2A9E8E", items:[9], note:"Mix with juice or a post-workout shake for best uptake. Consistency matters more than timing — take daily without fail." },
+  { time:"EVENING / DINNER", sub:"With your largest meal", color:"#9A6AE8", items:[5,6,8], note:"D3/K2 + Magnesium work synergistically — magnesium activates D3. Zinc taken separately from high-calcium foods." },
+  { time:"BEFORE BED", sub:"30-60 min before sleep", color:"#3A9E6B", items:[7], note:"Supports deep sleep and overnight muscle repair. The glycine in magnesium glycinate is calming to the nervous system." }
+];
+
+const ICONS = {
+  COLLAGEN:  { abbr: "COL", color: "#E8572A" },
+  BIOCELL:   { abbr: "BC",  color: "#E8572A" },
+  VITC:      { abbr: "C",   color: "#E8572A" },
+  FISHOIL:   { abbr: "Ω3",  color: "#4A7FC1" },
+  D3K2:      { abbr: "D3",  color: "#9A6AE8" },
+  TURMERIC:  { abbr: "TUR", color: "#9A6AE8" },
+  MAGNESIUM: { abbr: "MG",  color: "#3A9E6B" },
+  ZINC:      { abbr: "ZN",  color: "#9A6AE8" },
+  CREATINE:  { abbr: "CR",  color: "#2A9E8E" },
+  WHEY:      { abbr: "WP",  color: "#E85757" },
+};
+
+export default function SupplementProtocol() {
+  const [activeId, setActiveId] = useState(1);
+  const [view, setView] = useState("detail");
+  const [links, setLinks] = useState({});
+  const [entered, setEntered] = useState(false);
+  const screenW = useWidth();
+  const isMobile = screenW < 600;
+  useEffect(() => { setTimeout(() => setEntered(true), 80); }, []);
+  const active = supps.find(s => s.id === activeId);
+
+  return (
+    <div style={{ minHeight:"100vh", background:BRAND.bg, color:BRAND.white, fontFamily:"Georgia,'Times New Roman',serif", opacity: entered ? 1 : 0, transition:"opacity 0.4s" }}>
+      {/* NAV */}
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:isMobile?"12px 16px":"14px 24px", borderBottom:`1px solid ${BRAND.border}`, position:"sticky", top:0, background:BRAND.bgDeep, zIndex:100 }}>
+        <BrandLogo size={isMobile ? 0.85 : 1.1} />
+        <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
+          {!isMobile && <div style={{ fontSize:"8px", color:BRAND.dim, fontFamily:"monospace", letterSpacing:"2px", marginRight:8 }}>10 SUPPLEMENTS</div>}
+          <div style={{ display:"flex", gap:2 }}>
+            {[["detail","SUPPLEMENTS"],["schedule","SCHEDULE"]].map(([v,label]) => (
+              <button key={v} onClick={() => setView(v)} style={{ padding:isMobile?"6px 10px":"6px 14px", background: view===v ? BRAND.blue+"20" : "transparent", border:`1px solid ${view===v ? BRAND.blue+"60" : BRAND.border}`, color: view===v ? BRAND.blue : BRAND.dim, fontSize:"8px", letterSpacing:"2px", fontFamily:"monospace", cursor:"pointer", transition:"all 0.2s" }}>
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {view === "detail" ? (
+        <div style={{ display:"grid", gridTemplateColumns:isMobile?"1fr":"200px 1fr", height:"calc(100vh - 57px)" }}>
+          {/* SIDEBAR */}
+          {isMobile ? (
+            <div style={{ display:"flex", overflowX:"auto", scrollbarWidth:"none", background:BRAND.bgDeep, borderBottom:`1px solid ${BRAND.border}`, padding:"10px 12px", gap:8 }}>
+              {supps.map(s => (
+                <div key={s.id} onClick={() => setActiveId(s.id)} style={{ flexShrink:0, display:"flex", flexDirection:"column", alignItems:"center", gap:4, padding:"6px 8px", cursor:"pointer", borderRadius:6, background: activeId===s.id ? BRAND.bgCard : "transparent", border:`1px solid ${activeId===s.id ? s.timingColor+"40" : "transparent"}` }}>
+                  <SupplementIcon color={ICONS[s.imgKey].color} abbr={ICONS[s.imgKey].abbr} size={36} />
+                  <div style={{ fontSize:"7px", color:activeId===s.id?BRAND.white:BRAND.dim, textAlign:"center", whiteSpace:"nowrap", fontFamily:"monospace" }}>{s.name.split(" ")[0]}</div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ borderRight:`1px solid ${BRAND.border}`, overflowY:"auto", scrollbarWidth:"thin", background:BRAND.bgDeep }}>
+              {supps.map(s => (
+                <div key={s.id} onClick={() => setActiveId(s.id)} style={{ padding:"10px 12px", display:"flex", gap:10, alignItems:"center", cursor:"pointer", borderBottom:`1px solid ${BRAND.border}`, background: activeId===s.id ? s.timingColor+"12" : "transparent", borderLeft:`3px solid ${activeId===s.id ? s.timingColor : "transparent"}`, transition:"all 0.15s" }}>
+                  <SupplementIcon color={ICONS[s.imgKey].color} abbr={ICONS[s.imgKey].abbr} size={34} />
+                  <div style={{ minWidth:0 }}>
+                    <div style={{ fontSize:"11px", color:activeId===s.id?BRAND.white:BRAND.silver, marginBottom:2, fontFamily:"Georgia,serif" }}>{s.name}</div>
+                    <div style={{ fontSize:"8px", color:BRAND.dimmer, fontFamily:"monospace" }}>{s.brand}</div>
+                    <div style={{ fontSize:"7px", color:activeId===s.id?s.timingColor:BRAND.dimmer, fontFamily:"monospace", letterSpacing:"1px", marginTop:2 }}>{s.timing}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* DETAIL PANEL */}
+          {active && (
+            <div style={{ overflowY:"auto", scrollbarWidth:"none" }}>
+              {/* HERO */}
+              <div style={{ background:BRAND.bgDeep, borderBottom:`1px solid ${BRAND.border}`, padding:isMobile?"20px 18px":"24px 32px", position:"relative", overflow:"hidden" }}>
+                <div style={{ position:"absolute", top:0, left:0, right:0, height:"2px", background:`linear-gradient(90deg,${active.timingColor},transparent)` }} />
+                <div style={{ position:"absolute", right:-20, top:-20, width:160, height:160, borderRadius:"50%", background: active.timingColor+"08" }} />
+                <div style={{ display:"flex", alignItems:"flex-start", gap:20 }}>
+                  <SupplementIcon color={ICONS[active.imgKey].color} abbr={ICONS[active.imgKey].abbr} size={isMobile?60:80} />
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:"8px", letterSpacing:"4px", color:active.timingColor, fontFamily:"monospace", marginBottom:6 }}>{active.timing}</div>
+                    <h2 style={{ margin:"0 0 4px", fontSize:isMobile?"22px":"clamp(18px,2.5vw,28px)", fontWeight:"400", lineHeight:1.2, color:BRAND.white }}>{active.name}</h2>
+                    <div style={{ fontSize:"12px", color:BRAND.dim, marginBottom:16 }}>{active.type}</div>
+                    <div style={{ display:"flex", gap:18, flexWrap:"wrap" }}>
+                      <div>
+                        <div style={{ fontSize:"7px", color:BRAND.dimmer, letterSpacing:"2px", fontFamily:"monospace", marginBottom:3 }}>BRAND</div>
+                        <div style={{ fontSize:"12px", color:BRAND.silver }}>{active.brand}</div>
+                      </div>
+                      <div style={{ width:1, background:BRAND.border }} />
+                      <div>
+                        <div style={{ fontSize:"7px", color:BRAND.dimmer, letterSpacing:"2px", fontFamily:"monospace", marginBottom:3 }}>DOSE</div>
+                        <div style={{ fontSize:"12px", color:BRAND.silver }}>{active.dose}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* CONTENT */}
+              <div style={{ padding:isMobile?"18px 18px":"24px 36px" }}>
+                <div style={{ border:`1px solid ${active.timingColor}30`, background:`${active.timingColor}08`, padding:"12px 14px", borderRadius:4, marginBottom:20 }}>
+                  <div style={{ fontSize:"9px", color:active.timingColor, fontFamily:"monospace", letterSpacing:"3px", marginBottom:6 }}>PURPOSE</div>
+                  <div style={{ fontSize:"12px", color:BRAND.dim, lineHeight:1.8 }}>{active.purpose}</div>
+                </div>
+
+                <h3 style={{ fontSize:"clamp(13px,1.6vw,17px)", fontWeight:"400", margin:"0 0 10px", color:BRAND.white }}>Why It Works</h3>
+                <p style={{ fontSize:"13px", color:BRAND.dim, lineHeight:1.9, margin:"0 0 18px" }}>{active.description}</p>
+
+                <div style={{ marginBottom:18 }}>
+                  <div style={{ fontSize:"7px", letterSpacing:"4px", color:BRAND.dimmer, fontFamily:"monospace", marginBottom:10 }}>KEY BENEFITS</div>
+                  {active.bullets.map((b,i) => (
+                    <div key={i} style={{ display:"flex", gap:10, marginBottom:8, paddingBottom:8, borderBottom:`1px solid ${BRAND.border}` }}>
+                      <span style={{ color:active.timingColor, flexShrink:0, fontSize:"9px", marginTop:3 }}>▸</span>
+                      <span style={{ fontSize:"12px", color:BRAND.dim, lineHeight:1.7 }}>{b}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ background:BRAND.bgDeep, borderLeft:`3px solid ${BRAND.blue}`, padding:"14px 16px", borderRadius:2, marginBottom:20 }}>
+                  <div style={{ fontSize:"7px", letterSpacing:"3px", color:BRAND.blue, fontFamily:"monospace", marginBottom:8 }}>PROTOCOL NOTE</div>
+                  <p style={{ margin:0, fontSize:"12px", color:BRAND.silver, lineHeight:1.8 }}>{active.protocol}</p>
+                </div>
+
+                <div style={{ border:`1px solid ${BRAND.border}`, padding:"13px 14px", background:BRAND.bgCard, borderRadius:4, marginBottom:20 }}>
+                  <div style={{ fontSize:"7px", letterSpacing:"3px", color:BRAND.dim, fontFamily:"monospace", marginBottom:8 }}>PURCHASE LINK</div>
+                  <input type="text" value={links[active.id]||""} onChange={e => setLinks(p => ({...p,[active.id]:e.target.value}))} placeholder="Paste Amazon or product URL here..." style={{ width:"100%", background:"transparent", border:"none", fontSize:"11px", color:BRAND.silver, outline:"none", fontFamily:"monospace" }} />
+                  {links[active.id] && <a href={links[active.id]} target="_blank" rel="noopener noreferrer" style={{ display:"block", marginTop:8, fontSize:"10px", fontFamily:"monospace" }}>→ Open link</a>}
+                </div>
+
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:18, paddingTop:16, borderTop:`1px solid ${BRAND.border}` }}>
+                  <button onClick={() => setActiveId(Math.max(1,activeId-1))} disabled={activeId===1} style={{ padding:"8px 16px", background:"transparent", border:`1px solid ${BRAND.border}`, color: activeId===1 ? BRAND.dimmer : BRAND.dim, fontSize:"9px", fontFamily:"monospace", letterSpacing:"2px", cursor:activeId===1?"default":"pointer" }}>← PREV</button>
+                  <span style={{ fontSize:"9px", color:BRAND.dimmer, fontFamily:"monospace" }}>{activeId} / {supps.length}</span>
+                  <button onClick={() => setActiveId(Math.min(supps.length,activeId+1))} disabled={activeId===supps.length} style={{ padding:"8px 16px", background:"transparent", border:`1px solid ${BRAND.border}`, color: activeId===supps.length ? BRAND.dimmer : BRAND.dim, fontSize:"9px", fontFamily:"monospace", letterSpacing:"2px", cursor:activeId===supps.length?"default":"pointer" }}>NEXT →</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div style={{ padding:isMobile?"18px 16px":"28px 32px", maxWidth:820, margin:"0 auto" }}>
+          <div style={{ marginBottom:24 }}>
+            <div style={{ fontSize:"8px", letterSpacing:"5px", color:BRAND.dim, fontFamily:"monospace", marginBottom:10 }}>DAILY SCHEDULE</div>
+            <p style={{ margin:0, fontSize:"13px", color:BRAND.dim, lineHeight:1.8 }}>When you take your supplements matters. Follow this protocol daily for optimal results. Click any supplement to view full details.</p>
+          </div>
+
+          {schedule.map((block,bi) => (
+            <div key={bi} style={{ marginBottom:22 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:8 }}>
+                <div style={{ width:8, height:8, background:block.color, flexShrink:0 }} />
+                <span style={{ fontSize:"10px", letterSpacing:"3px", color:block.color, fontFamily:"monospace" }}>{block.time}</span>
+                {!isMobile && <span style={{ fontSize:"10px", color:BRAND.dimmer, fontFamily:"monospace" }}>· {block.sub}</span>}
+              </div>
+              <div style={{ marginLeft:18 }}>
+                {block.items.map(id => {
+                  const s = supps.find(x => x.id===id);
+                  return (
+                    <div key={id} onClick={() => { setActiveId(id); setView("detail"); }} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 14px", background:BRAND.bgCard, border:`1px solid ${BRAND.border}`, borderRadius:6, marginBottom:4, cursor:"pointer" }}>
+                      <SupplementIcon color={ICONS[s.imgKey].color} abbr={ICONS[s.imgKey].abbr} size={40} />
+                      <div>
+                        <div style={{ fontSize:"12px", color:BRAND.silver, marginBottom:2 }}>{s.name}</div>
+                        <div style={{ fontSize:"9px", color:BRAND.dimmer, fontFamily:"monospace" }}>{s.dose} · {s.brand}</div>
+                      </div>
+                      <span style={{ fontSize:"8px", color:BRAND.dimmer, fontFamily:"monospace", marginLeft:"auto" }}>→</span>
+                    </div>
+                  );
+                })}
+                <div style={{ padding:"8px 10px", marginTop:3, background:`${block.color}08`, border:`1px solid ${block.color}20`, borderRadius:4 }}>
+                  <span style={{ fontSize:"11px", color:BRAND.dim, lineHeight:1.7 }}>{block.note}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {/* SYNERGY PANEL */}
+          <div style={{ background:BRAND.bgDeep, border:`1px solid ${BRAND.border}`, borderTop:`2px solid ${BRAND.blue}`, padding:"18px 20px", borderRadius:4, marginTop:12 }}>
+            <div style={{ fontSize:"8px", letterSpacing:"4px", color:BRAND.blue, fontFamily:"monospace", marginBottom:14 }}>SYNERGY COMBINATIONS</div>
+            {[
+              ["Collagen + Vitamin C","PRE-WORKOUT","#E8572A","Vitamin C activates collagen synthesis pathways (prolyl hydroxylase enzyme). Taking both together pre-workout is far more effective than either alone."],
+              ["Vitamin D3/K2 + Magnesium","EVENING / DINNER","#9A6AE8","Magnesium converts Vitamin D3 to its active form (calcitriol). Without adequate magnesium, D3 supplementation is significantly blunted."],
+              ["Creatine + Juice or Fast Carbs","ANYTIME DAILY","#2A9E8E","Insulin driven by fast carbohydrates enhances creatine transport into muscle cells via GLUT4 upregulation, increasing uptake by ~60%."],
+              ["Zinc Bisglycinate + Collagen Stack","EVENING / DINNER","#A8D4E8","The glycine in zinc bisglycinate and collagen creates a synergistic overnight repair environment — supporting both hormonal recovery and connective tissue synthesis."]
+            ].map(([title,time,color,desc]) => (
+              <div key={title} style={{ display:"grid", gridTemplateColumns:"3px 1fr", gap:12, marginBottom:14, paddingBottom:14, borderBottom:`1px solid ${BRAND.border}` }}>
+                <div style={{ background:color }} />
+                <div>
+                  <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:4, flexWrap:"wrap" }}>
+                    <span style={{ fontSize:"12px", color:BRAND.silver }}>{title}</span>
+                    <span style={{ fontSize:"8px", color:color, fontFamily:"monospace", letterSpacing:"2px" }}>{time}</span>
+                  </div>
+                  <p style={{ margin:0, fontSize:"12px", color:BRAND.dim, lineHeight:1.8 }}>{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ display:"flex", justifyContent:"center", marginTop:32, paddingTop:18, borderTop:`1px solid ${BRAND.border}` }}>
+            <BrandLogo size={0.9} center={true} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<SupplementProtocol />);
+</script>
+</body>
+</html>
