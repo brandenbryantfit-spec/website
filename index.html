@@ -29,6 +29,24 @@ const BRAND = {
   dim: "#5A5E6A", dimmer: "#2A2C34", border: "#16181F", borderLight: "#1E2028",
 };
 
+const makeImg = (abbr, color) => {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" rx="20" fill="${color}18" stroke="${color}50" stroke-width="2"/><text x="100" y="128" text-anchor="middle" font-size="68" font-weight="900" font-family="Arial Black,Arial,sans-serif" fill="${color}" opacity="0.85">${abbr}</text></svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+};
+
+const IMGS = {
+  COLLAGEN:  makeImg("COL", "#E8572A"),
+  BIOCELL:   makeImg("BC",  "#E8572A"),
+  VITC:      makeImg("C",   "#E8572A"),
+  FISHOIL:   makeImg("Ω3",  "#4A7FC1"),
+  D3K2:      makeImg("D3",  "#9A6AE8"),
+  TURMERIC:  makeImg("TUR", "#9A6AE8"),
+  MAGNESIUM: makeImg("MG",  "#3A9E6B"),
+  ZINC:      makeImg("ZN",  "#9A6AE8"),
+  CREATINE:  makeImg("CR",  "#2A9E8E"),
+  WHEY:      makeImg("WP",  "#E85757"),
+};
+
 const useWidth = () => {
   const [w, setW] = useState(typeof window !== "undefined" ? window.innerWidth : 800);
   useEffect(() => {
@@ -38,14 +56,6 @@ const useWidth = () => {
   }, []);
   return w;
 };
-
-const SupplementIcon = ({ color, abbr, size = 40 }) => (
-  <svg width={size} height={size} viewBox="0 0 40 40" style={{ flexShrink: 0, borderRadius: 8, overflow: "visible" }}>
-    <rect width="40" height="40" rx="8" fill={color + "15"} stroke={color + "40"} strokeWidth="1"/>
-    <text x="20" y="26" textAnchor="middle" fontSize="13" fontWeight="700"
-      fontFamily="'Arial Black',sans-serif" fill={color} opacity="0.9">{abbr}</text>
-  </svg>
-);
 
 const BrandLogo = ({ size = 1, center = false }) => (
   <div style={{ display:"flex", flexDirection:"column", alignItems: center ? "center" : "flex-start", gap: `${2*size}px` }}>
@@ -210,19 +220,6 @@ const schedule = [
   { time:"BEFORE BED", sub:"30-60 min before sleep", color:"#3A9E6B", items:[7], note:"Supports deep sleep and overnight muscle repair. The glycine in magnesium glycinate is calming to the nervous system." }
 ];
 
-const ICONS = {
-  COLLAGEN:  { abbr: "COL", color: "#E8572A" },
-  BIOCELL:   { abbr: "BC",  color: "#E8572A" },
-  VITC:      { abbr: "C",   color: "#E8572A" },
-  FISHOIL:   { abbr: "Ω3",  color: "#4A7FC1" },
-  D3K2:      { abbr: "D3",  color: "#9A6AE8" },
-  TURMERIC:  { abbr: "TUR", color: "#9A6AE8" },
-  MAGNESIUM: { abbr: "MG",  color: "#3A9E6B" },
-  ZINC:      { abbr: "ZN",  color: "#9A6AE8" },
-  CREATINE:  { abbr: "CR",  color: "#2A9E8E" },
-  WHEY:      { abbr: "WP",  color: "#E85757" },
-};
-
 function SupplementProtocol() {
   const [activeId, setActiveId] = useState(1);
   const [view, setView] = useState("detail");
@@ -235,6 +232,7 @@ function SupplementProtocol() {
 
   return (
     <div style={{ minHeight:"100vh", background:BRAND.bg, color:BRAND.white, fontFamily:"Georgia,'Times New Roman',serif", opacity: entered ? 1 : 0, transition:"opacity 0.4s" }}>
+
       {/* NAV */}
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:isMobile?"12px 16px":"14px 24px", borderBottom:`1px solid ${BRAND.border}`, position:"sticky", top:0, background:BRAND.bgDeep, zIndex:100 }}>
         <BrandLogo size={isMobile ? 0.85 : 1.1} />
@@ -252,12 +250,13 @@ function SupplementProtocol() {
 
       {view === "detail" ? (
         <div style={{ display:"grid", gridTemplateColumns:isMobile?"1fr":"200px 1fr", height:"calc(100vh - 57px)" }}>
+
           {/* SIDEBAR */}
           {isMobile ? (
             <div style={{ display:"flex", overflowX:"auto", scrollbarWidth:"none", background:BRAND.bgDeep, borderBottom:`1px solid ${BRAND.border}`, padding:"10px 12px", gap:8 }}>
               {supps.map(s => (
                 <div key={s.id} onClick={() => setActiveId(s.id)} style={{ flexShrink:0, display:"flex", flexDirection:"column", alignItems:"center", gap:4, padding:"6px 8px", cursor:"pointer", borderRadius:6, background: activeId===s.id ? BRAND.bgCard : "transparent", border:`1px solid ${activeId===s.id ? s.timingColor+"40" : "transparent"}` }}>
-                  <SupplementIcon color={ICONS[s.imgKey].color} abbr={ICONS[s.imgKey].abbr} size={36} />
+                  <img src={IMGS[s.imgKey]} alt="" style={{ width:36, height:36, objectFit:"cover", borderRadius:6 }} />
                   <div style={{ fontSize:"7px", color:activeId===s.id?BRAND.white:BRAND.dim, textAlign:"center", whiteSpace:"nowrap", fontFamily:"monospace" }}>{s.name.split(" ")[0]}</div>
                 </div>
               ))}
@@ -266,7 +265,7 @@ function SupplementProtocol() {
             <div style={{ borderRight:`1px solid ${BRAND.border}`, overflowY:"auto", scrollbarWidth:"thin", background:BRAND.bgDeep }}>
               {supps.map(s => (
                 <div key={s.id} onClick={() => setActiveId(s.id)} style={{ padding:"10px 12px", display:"flex", gap:10, alignItems:"center", cursor:"pointer", borderBottom:`1px solid ${BRAND.border}`, background: activeId===s.id ? s.timingColor+"12" : "transparent", borderLeft:`3px solid ${activeId===s.id ? s.timingColor : "transparent"}`, transition:"all 0.15s" }}>
-                  <SupplementIcon color={ICONS[s.imgKey].color} abbr={ICONS[s.imgKey].abbr} size={34} />
+                  <img src={IMGS[s.imgKey]} alt="" style={{ width:34, height:34, objectFit:"cover", borderRadius:6, flexShrink:0 }} />
                   <div style={{ minWidth:0 }}>
                     <div style={{ fontSize:"11px", color:activeId===s.id?BRAND.white:BRAND.silver, marginBottom:2, fontFamily:"Georgia,serif" }}>{s.name}</div>
                     <div style={{ fontSize:"8px", color:BRAND.dimmer, fontFamily:"monospace" }}>{s.brand}</div>
@@ -280,29 +279,53 @@ function SupplementProtocol() {
           {/* DETAIL PANEL */}
           {active && (
             <div style={{ overflowY:"auto", scrollbarWidth:"none" }}>
+
               {/* HERO */}
               <div style={{ background:BRAND.bgDeep, borderBottom:`1px solid ${BRAND.border}`, padding:isMobile?"20px 18px":"24px 32px", position:"relative", overflow:"hidden" }}>
                 <div style={{ position:"absolute", top:0, left:0, right:0, height:"2px", background:`linear-gradient(90deg,${active.timingColor},transparent)` }} />
-                <div style={{ position:"absolute", right:-20, top:-20, width:160, height:160, borderRadius:"50%", background: active.timingColor+"08" }} />
-                <div style={{ display:"flex", alignItems:"flex-start", gap:20 }}>
-                  <SupplementIcon color={ICONS[active.imgKey].color} abbr={ICONS[active.imgKey].abbr} size={isMobile?60:80} />
-                  <div style={{ flex:1 }}>
-                    <div style={{ fontSize:"8px", letterSpacing:"4px", color:active.timingColor, fontFamily:"monospace", marginBottom:6 }}>{active.timing}</div>
-                    <h2 style={{ margin:"0 0 4px", fontSize:isMobile?"22px":"clamp(18px,2.5vw,28px)", fontWeight:"400", lineHeight:1.2, color:BRAND.white }}>{active.name}</h2>
-                    <div style={{ fontSize:"12px", color:BRAND.dim, marginBottom:16 }}>{active.type}</div>
-                    <div style={{ display:"flex", gap:18, flexWrap:"wrap" }}>
-                      <div>
-                        <div style={{ fontSize:"7px", color:BRAND.dimmer, letterSpacing:"2px", fontFamily:"monospace", marginBottom:3 }}>BRAND</div>
-                        <div style={{ fontSize:"12px", color:BRAND.silver }}>{active.brand}</div>
-                      </div>
-                      <div style={{ width:1, background:BRAND.border }} />
-                      <div>
-                        <div style={{ fontSize:"7px", color:BRAND.dimmer, letterSpacing:"2px", fontFamily:"monospace", marginBottom:3 }}>DOSE</div>
-                        <div style={{ fontSize:"12px", color:BRAND.silver }}>{active.dose}</div>
+
+                {isMobile ? (
+                  <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:16 }}>
+                    <img src={IMGS[active.imgKey]} alt={active.name} style={{ height:110, width:110, objectFit:"cover", borderRadius:12 }} />
+                    <div style={{ width:"100%", textAlign:"center" }}>
+                      <div style={{ fontSize:"8px", letterSpacing:"3px", color:active.timingColor, fontFamily:"monospace", marginBottom:6 }}>{active.timing}</div>
+                      <h2 style={{ margin:"0 0 4px", fontSize:"22px", fontWeight:"400", lineHeight:1.2, color:BRAND.white }}>{active.name}</h2>
+                      <div style={{ fontSize:"12px", color:BRAND.dim, marginBottom:14 }}>{active.type}</div>
+                      <div style={{ display:"flex", justifyContent:"center", gap:18 }}>
+                        <div>
+                          <div style={{ fontSize:"7px", color:BRAND.dimmer, letterSpacing:"2px", fontFamily:"monospace", marginBottom:3 }}>BRAND</div>
+                          <div style={{ fontSize:"12px", color:BRAND.silver }}>{active.brand}</div>
+                        </div>
+                        <div style={{ width:1, background:BRAND.border }} />
+                        <div>
+                          <div style={{ fontSize:"7px", color:BRAND.dimmer, letterSpacing:"2px", fontFamily:"monospace", marginBottom:3 }}>DOSE</div>
+                          <div style={{ fontSize:"12px", color:BRAND.silver }}>{active.dose}</div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div style={{ position:"relative", minHeight:"170px" }}>
+                    <img src={IMGS[active.imgKey]} alt="" style={{ position:"absolute", right:-10, top:"50%", transform:"translateY(-50%)", height:210, width:210, objectFit:"cover", borderRadius:20, opacity:0.07, filter:"blur(24px)", pointerEvents:"none" }} />
+                    <img src={IMGS[active.imgKey]} alt={active.name} style={{ position:"absolute", right:16, top:"50%", transform:"translateY(-50%)", height:150, width:150, objectFit:"cover", borderRadius:12 }} />
+                    <div style={{ position:"relative", zIndex:1, maxWidth:"calc(100% - 185px)" }}>
+                      <div style={{ fontSize:"8px", letterSpacing:"4px", color:active.timingColor, fontFamily:"monospace", marginBottom:6 }}>{active.timing}</div>
+                      <h2 style={{ margin:"0 0 4px", fontSize:"clamp(18px,2.5vw,28px)", fontWeight:"400", lineHeight:1.2, color:BRAND.white }}>{active.name}</h2>
+                      <div style={{ fontSize:"12px", color:BRAND.dim, marginBottom:16 }}>{active.type}</div>
+                      <div style={{ display:"flex", gap:18, flexWrap:"wrap" }}>
+                        <div>
+                          <div style={{ fontSize:"7px", color:BRAND.dimmer, letterSpacing:"2px", fontFamily:"monospace", marginBottom:3 }}>BRAND</div>
+                          <div style={{ fontSize:"12px", color:BRAND.silver }}>{active.brand}</div>
+                        </div>
+                        <div style={{ width:1, background:BRAND.border }} />
+                        <div>
+                          <div style={{ fontSize:"7px", color:BRAND.dimmer, letterSpacing:"2px", fontFamily:"monospace", marginBottom:3 }}>DOSE</div>
+                          <div style={{ fontSize:"12px", color:BRAND.silver }}>{active.dose}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* CONTENT */}
@@ -318,7 +341,7 @@ function SupplementProtocol() {
                 <div style={{ marginBottom:18 }}>
                   <div style={{ fontSize:"7px", letterSpacing:"4px", color:BRAND.dimmer, fontFamily:"monospace", marginBottom:10 }}>KEY BENEFITS</div>
                   {active.bullets.map((b,i) => (
-                    <div key={i} style={{ display:"flex", gap:10, marginBottom:8, paddingBottom:8, borderBottom:`1px solid ${BRAND.border}` }}>
+                    <div key={i} style={{ display:"flex", gap:10, marginBottom:7, paddingBottom:7, borderBottom:`1px solid ${BRAND.border}` }}>
                       <span style={{ color:active.timingColor, flexShrink:0, fontSize:"9px", marginTop:3 }}>▸</span>
                       <span style={{ fontSize:"12px", color:BRAND.dim, lineHeight:1.7 }}>{b}</span>
                     </div>
@@ -364,9 +387,9 @@ function SupplementProtocol() {
                   const s = supps.find(x => x.id===id);
                   return (
                     <div key={id} onClick={() => { setActiveId(id); setView("detail"); }} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 14px", background:BRAND.bgCard, border:`1px solid ${BRAND.border}`, borderRadius:6, marginBottom:4, cursor:"pointer" }}>
-                      <SupplementIcon color={ICONS[s.imgKey].color} abbr={ICONS[s.imgKey].abbr} size={40} />
+                      <img src={IMGS[s.imgKey]} alt="" style={{ width:40, height:40, objectFit:"cover", borderRadius:8, flexShrink:0 }} />
                       <div>
-                        <div style={{ fontSize:"12px", color:BRAND.silver, marginBottom:2 }}>{s.name}</div>
+                        <div style={{ fontSize:"12px", color:BRAND.silver, marginBottom:1 }}>{s.name}</div>
                         <div style={{ fontSize:"9px", color:BRAND.dimmer, fontFamily:"monospace" }}>{s.dose} · {s.brand}</div>
                       </div>
                       <span style={{ fontSize:"8px", color:BRAND.dimmer, fontFamily:"monospace", marginLeft:"auto" }}>→</span>
@@ -388,8 +411,8 @@ function SupplementProtocol() {
               ["Vitamin D3/K2 + Magnesium","EVENING / DINNER","#9A6AE8","Magnesium converts Vitamin D3 to its active form (calcitriol). Without adequate magnesium, D3 supplementation is significantly blunted."],
               ["Creatine + Juice or Fast Carbs","ANYTIME DAILY","#2A9E8E","Insulin driven by fast carbohydrates enhances creatine transport into muscle cells via GLUT4 upregulation, increasing uptake by ~60%."],
               ["Zinc Bisglycinate + Collagen Stack","EVENING / DINNER","#A8D4E8","The glycine in zinc bisglycinate and collagen creates a synergistic overnight repair environment — supporting both hormonal recovery and connective tissue synthesis."]
-            ].map(([title,time,color,desc]) => (
-              <div key={title} style={{ display:"grid", gridTemplateColumns:"3px 1fr", gap:12, marginBottom:14, paddingBottom:14, borderBottom:`1px solid ${BRAND.border}` }}>
+            ].map(([title,time,color,desc],i,arr) => (
+              <div key={title} style={{ display:"grid", gridTemplateColumns:"3px 1fr", gap:12, marginBottom: i<arr.length-1?14:0, paddingBottom: i<arr.length-1?14:0, borderBottom: i<arr.length-1?`1px solid ${BRAND.border}`:"none" }}>
                 <div style={{ background:color }} />
                 <div>
                   <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:4, flexWrap:"wrap" }}>
