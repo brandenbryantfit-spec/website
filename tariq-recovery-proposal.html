@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tariq — Your Recovery Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #080808;
+    --white: #f5f0eb;
+    --cream: #ede8e0;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --red: #c0392b;
+    --gray: #2a2a2a;
+    --gray-mid: #444;
+    --gray-light: #888;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 60px 40px;
+    position: relative;
+    border-bottom: 1px solid #222;
+    background: linear-gradient(160deg, #0d0d0d 0%, #080808 60%, #0f0a00 100%);
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -200px;
+    right: -100px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 15vw, 140px);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: #ffffff;
+  }
+
+  .hero-name span {
+    color: var(--gold-light);
+    display: block;
+  }
+
+  .hero-sub {
+    margin-top: 32px;
+    font-size: 11px;
+    color: #aaa;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    max-width: 400px;
+  }
+
+  .hero-line {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    width: 1px;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+  }
+
+  .hero-date {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #aaa;
+    text-transform: uppercase;
+  }
+
+  /* STAT BAR */
+  .stat-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  .stat {
+    padding: 32px 40px;
+    border-right: 1px solid #1a1a1a;
+  }
+
+  .stat:last-child { border-right: none; }
+
+  /* MRI SECTION BACKGROUND - stronger contrast */
+  .diagnosis-section {
+    background: #060606;
+  }
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gray-light);
+    text-transform: uppercase;
+  }
+
+  /* SECTION BASE */
+  section {
+    padding: 80px 40px;
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  .section-tag {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .section-tag::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #1a1a1a;
+    max-width: 200px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 600;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    color: #ffffff;
+    text-shadow: 0 1px 20px rgba(0,0,0,1);
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .section-body {
+    color: var(--gray-light);
+    max-width: 600px;
+    line-height: 1.9;
+    font-size: 12px;
+  }
+
+  /* DIAGNOSIS BLOCK */
+  .diagnosis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: #1a1a1a;
+    margin-top: 48px;
+  }
+
+  .diag-cell {
+    background: var(--black);
+    padding: 32px;
+  }
+
+  .diag-level {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .diag-finding {
+    font-size: 11px;
+    color: var(--gray-light);
+    line-height: 1.8;
+  }
+
+  .diag-finding strong {
+    color: var(--white);
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12px;
+  }
+
+  .diag-cell.highlight {
+    background: #0d0900;
+    border: 1px solid rgba(201,168,76,0.15);
+  }
+
+  /* REFRAME */
+  .reframe {
+    background: #0a0a0a;
+  }
+
+  .reframe-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(22px, 3.5vw, 36px);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--white);
+    border-left: 2px solid var(--gold);
+    padding-left: 32px;
+    margin: 48px 0;
+    max-width: 700px;
+  }
+
+  .warning-box {
+    background: rgba(192,57,43,0.08);
+    border: 1px solid rgba(192,57,43,0.2);
+    padding: 28px 32px;
+    margin-top: 40px;
+    max-width: 640px;
+  }
+
+  .warning-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .warning-text {
+    font-size: 12px;
+    color: #999;
+    line-height: 1.8;
+  }
+
+  /* PHASES */
+  .phases-section {
+    background: var(--black);
+  }
+
+  .phase-list {
+    margin-top: 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: #1a1a1a;
+  }
+
+  .phase {
+    background: var(--black);
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    min-height: 0;
+    transition: background 0.3s ease;
+    cursor: default;
+  }
+
+  .phase:hover {
+    background: #0d0d0d;
+  }
+
+  .phase-number {
+    background: #0a0a0a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+    border-right: 1px solid #1a1a1a;
+    gap: 8px;
+  }
+
+  .phase-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .phase-timeline {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--gray-light);
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .phase-content {
+    padding: 32px 40px;
+  }
+
+  .phase-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .phase-goal {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .phase-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .phase-items li {
+    font-size: 11px;
+    color: var(--gray-light);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    line-height: 1.6;
+  }
+
+  .phase-items li::before {
+    content: '—';
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .phase-milestone {
+    margin-top: 20px;
+    padding: 14px 20px;
+    background: rgba(201,168,76,0.05);
+    border-left: 2px solid var(--gold);
+    font-size: 10px;
+    color: var(--gold-light);
+    letter-spacing: 0.1em;
+  }
+
+  /* STAKES */
+  .stakes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: #1a1a1a;
+    margin-top: 48px;
+  }
+
+  .stake {
+    background: var(--black);
+    padding: 40px 32px;
+  }
+
+  .stake-icon {
+    font-size: 28px;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .stake-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .stake-body {
+    font-size: 11px;
+    color: var(--gray-light);
+    line-height: 1.8;
+  }
+
+  /* NERVE TRACKER */
+  .nerve-section {
+    background: #050505;
+  }
+
+  .nerve-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: #1a1a1a;
+    margin-top: 48px;
+  }
+
+  .nerve-item {
+    background: #050505;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nerve-item::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--gold), transparent);
+    opacity: 0.3;
+  }
+
+  .nerve-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .nerve-metric {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .nerve-desc {
+    font-size: 10px;
+    color: var(--gray-light);
+    line-height: 1.7;
+  }
+
+  /* INVESTMENT */
+  .investment-section {
+    background: var(--black);
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: #1a1a1a;
+    margin-top: 48px;
+  }
+
+  .pricing-card {
+    background: var(--black);
+    padding: 48px 40px;
+    position: relative;
+  }
+
+  .pricing-card.featured {
+    background: #0d0900;
+    border: 1px solid rgba(201,168,76,0.25);
+  }
+
+  .pricing-badge {
+    position: absolute;
+    top: -1px;
+    right: 32px;
+    background: var(--gold);
+    color: var(--black);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    font-weight: 500;
+  }
+
+  .pricing-tier {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--gray-light);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .pricing-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .pricing-card.featured .pricing-amount {
+    color: var(--gold);
+  }
+
+  .pricing-period {
+    font-size: 11px;
+    color: var(--gray-light);
+    margin-bottom: 32px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  .pricing-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .pricing-features li {
+    font-size: 11px;
+    color: var(--gray-light);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .pricing-features li::before {
+    content: '✓';
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .pricing-note {
+    margin-top: 24px;
+    font-size: 10px;
+    color: var(--gray-light);
+    font-style: italic;
+    line-height: 1.7;
+  }
+
+  .pricing-card.featured .pricing-note {
+    color: rgba(201,168,76,0.6);
+  }
+
+  /* FOOTER */
+  .footer {
+    padding: 60px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 1px solid #1a1a1a;
+  }
+
+  .footer-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--white);
+    letter-spacing: 0.05em;
+  }
+
+  .footer-brand span {
+    color: var(--gold);
+  }
+
+  .footer-tagline {
+    font-size: 10px;
+    color: var(--gray-light);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  .footer-contact {
+    text-align: right;
+    font-size: 10px;
+    color: var(--gray-light);
+    letter-spacing: 0.1em;
+    line-height: 2;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  /* MOBILE */
+  @media (max-width: 640px) {
+    .hero { padding: 40px 24px; }
+    section { padding: 56px 24px; }
+    .stat-bar { grid-template-columns: 1fr; }
+    .stat { border-right: none; border-bottom: 1px solid #1a1a1a; }
+    .diagnosis-grid { grid-template-columns: 1fr; }
+    .stakes-grid { grid-template-columns: 1fr; }
+    .nerve-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .phase { grid-template-columns: 80px 1fr; }
+    .footer { flex-direction: column; gap: 32px; }
+    .footer-contact { text-align: left; }
+    .hero-date { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-date">Prepared for Tariq — May 2026</div>
+  <div class="hero-line"></div>
+  <div class="hero-label">Branden Bryant Rehab Coaching — Private Client Proposal</div>
+  <h1 class="hero-name">
+    Your Recovery<br>
+    <span>Roadmap.</span>
+  </h1>
+  <p class="hero-sub">Post-microdiscectomy rehabilitation — L5/S1 — Return to full athletic performance</p>
+</section>
+
+<!-- STATS -->
+<div class="stat-bar">
+  <div class="stat">
+    <div class="stat-number">19</div>
+    <div class="stat-label">Days Post-Surgery</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">12</div>
+    <div class="stat-label">Month Program</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">4</div>
+    <div class="stat-label">Recovery Phases</div>
+  </div>
+</div>
+
+<!-- DIAGNOSIS -->
+<section class="diagnosis-section reveal">
+  <h2 class="section-title">What the MRI <em>actually</em> showed</h2>
+  <p class="section-body">Your April MRI revealed a large, compressive left-sided disc prolapse at L5/S1 with direct S1 nerve root compression and moderate foraminal stenosis. This is what put you in a wheelchair. The microdiscectomy removed the crisis — now the real work begins.</p>
+
+  <div class="diagnosis-grid">
+    <div class="diag-cell">
+      <div class="diag-level">L4 — L5</div>
+      <div class="diag-finding">
+        <strong>Disc Bulge</strong>
+        Median protrusion contacting L5 nerve roots at dural sleeve exit. Bilateral facet joint effusions indicating secondary inflammation.
+      </div>
+    </div>
+    <div class="diag-cell highlight">
+      <div class="diag-level">L5 — S1</div>
+      <div class="diag-finding">
+        <strong>Primary Injury Level — Surgical Site</strong>
+        Large compressive left-sided prolapse. Direct S1 nerve root compression. Moderate foraminal stenosis. Source of plantar flexion weakness, calf numbness, and burning.
+      </div>
+    </div>
+    <div class="diag-cell" style="grid-column: 1 / -1; background: #050505;">
+      <div class="diag-finding">
+        <strong>Surgical Procedure — April 17, 2026</strong>
+        Left L5/S1 microdiscectomy. Hemilaminectomy with decompression of nerve root, partial facetectomy, foraminotomy, and excision of herniated disc material. Post-operative assessment: smooth and uneventful. Day 5 report — much improved leg pain, good power and sensation returning.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REFRAME -->
+<section class="reframe reveal">
+  <div class="section-tag">The Truth Most People Miss</div>
+  <h2 class="section-title">Surgery was <em>step one.</em><br>Not the solution.</h2>
+
+  <div class="reframe-quote">
+    "The surgery removed the crisis. The disc is still there. The level is still vulnerable. The muscles that were supposed to protect that disc — they're still weak, still deconditioned, still not doing their job."
+  </div>
+
+  <p class="section-body">Re-herniation rates exist for a reason. The structural environment that allowed the first herniation hasn't changed. Without deliberately rebuilding the posterior chain and deep core stability around that level, the disc remains exposed to the same forces that caused this in the first place.</p>
+
+  <div class="warning-box">
+    <div class="warning-label">⚠ What Most People Do Wrong</div>
+    <div class="warning-text">Most people jump immediately into back extensions, side bending, and rotational movements during the acute phase — and end up setting themselves back weeks or months. The spine needs to be stabilized before it can be loaded. Isometric work first. Movement patterns second. Loading third. There is a time and place for every exercise. The problem is never the exercise — it's the timing.</div>
+  </div>
+</section>
+
+<!-- STAKES -->
+<section class="reveal">
+  <div class="section-tag">What's On The Line</div>
+  <h2 class="section-title">Three reasons this <em>has</em> to go right</h2>
+
+  <div class="stakes-grid">
+    <div class="stake">
+      <span class="stake-icon">✈</span>
+      <div class="stake-title">Your Career</div>
+      <div class="stake-body">Emirates aviation medical clearance requires full neurological recovery — symmetrical strength, resolved sensation, complete function. You currently have residual plantar flexion weakness and S1 numbness. These need to fully resolve. That doesn't happen by accident.</div>
+    </div>
+    <div class="stake">
+      <span class="stake-icon">⚡</span>
+      <div class="stake-title">Your Athletic Identity</div>
+      <div class="stake-body">You're a Crossfit and Hyrox athlete. That's not just a hobby — that's who you are. Generic physio gets you walking normally. Getting back to the floor, back to competing — that requires a completely different approach and a much longer timeline than 12 physio sessions.</div>
+    </div>
+    <div class="stake">
+      <span class="stake-icon">🛡</span>
+      <div class="stake-title">Preventing Recurrence</div>
+      <div class="stake-body">Re-herniation risk is documented at approximately 8% post-microdiscectomy. The primary protective factor is posterior chain strength and spinal stability. Building this isn't optional — it's the only thing that keeps you out of surgery again.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASES -->
+<section class="phases-section reveal">
+  <div class="section-tag">The Protocol</div>
+  <h2 class="section-title">12 months. <em>Four phases.</em><br>One outcome.</h2>
+  <p class="section-body">Every phase has entry criteria. You don't advance on a calendar — you advance when your body demonstrates readiness. This is what separates a real protocol from a generic program.</p>
+
+  <div class="phase-list">
+
+    <div class="phase">
+      <div class="phase-number">
+        <div class="phase-num">01</div>
+        <div class="phase-timeline">Weeks 2–6</div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-title">Neural Calming & Movement Restoration</div>
+        <div class="phase-goal">Goal — Reduce irritability. Protect the surgical site. Begin nerve recovery.</div>
+        <ul class="phase-items">
+          <li>Diaphragmatic breathing — rebuilds intra-abdominal pressure control passively</li>
+          <li>Walking progression — 10 min to 45+ min. Most underrated post-surgical intervention</li>
+          <li>Supine heel slides and abdominal bracing — zero load, pure neuromuscular re-education</li>
+          <li>Sciatic nerve flossing — gentle neurodynamic mobilization to keep S1 pathway mobile during recovery</li>
+          <li>Seated calf raises — directly targets plantar flexion deficit from S1 involvement</li>
+          <li>Posture and positioning education — sitting tolerance critical for cockpit return</li>
+        </ul>
+        <div class="phase-milestone">Milestone: Walking 30+ min continuously with no increase in leg symptoms</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-number">
+        <div class="phase-num">02</div>
+        <div class="phase-timeline">Weeks 6–12</div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-title">Stability Foundation</div>
+        <div class="phase-goal">Goal — Deep core endurance. McGill stability framework. Posterior chain reactivation.</div>
+        <ul class="phase-items">
+          <li>McGill Big Three — Bird dog, modified curl up, side plank. Most evidence-backed post-surgical stability protocol globally</li>
+          <li>Dead bugs — anti-extension core stability under controlled load</li>
+          <li>Glute bridges — reintroduced when pain-free, progressing to single leg</li>
+          <li>Standing calf raise progression — monitoring left vs right symmetry as S1 nerve recovery indicator</li>
+          <li>Hip hinge motor pattern — bodyweight only, establishing movement mechanics before load</li>
+          <li>Breathing under load — intra-abdominal pressure management during all exercises</li>
+        </ul>
+        <div class="phase-milestone">Milestone: All McGill Big Three performed with zero symptom provocation. Walking 45–60 min. Improving calf raise symmetry.</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-number">
+        <div class="phase-num">03</div>
+        <div class="phase-timeline">Months 3–5</div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-title">Posterior Chain Rebuilding</div>
+        <div class="phase-goal">Goal — Graded loading. Disc protection through range mastery. Structural rebuilding.</div>
+        <ul class="phase-items">
+          <li>Back extension iso holds 2-leg — building posterior chain endurance without spinal flexion under load</li>
+          <li>Single leg iso hold progression — once 2-leg is fully mastered</li>
+          <li>Quarter rep introduction month 4 — only after significant iso hold improvement</li>
+          <li>3-week increment progression: ¼ rep → ½ rep → ¾ rep → full rep</li>
+          <li>Pallof press — anti-rotation core stability under load</li>
+          <li>Suitcase carries, goblet squat, step ups — progressive functional loading</li>
+          <li>Hip flexor strengthening — psoas attaches to lumbar vertebrae, weakness creates instability</li>
+        </ul>
+        <div class="phase-milestone">Milestone: Full range back extension pain-free and strong. No residual leg symptoms during loading.</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-number">
+        <div class="phase-num">04</div>
+        <div class="phase-timeline">Month 6+</div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-title">Athletic Reconstruction</div>
+        <div class="phase-goal">Goal — Work toward Crossfit and Hyrox capacity. Maximize long term resilience. Prevent recurrence.</div>
+        <ul class="phase-items">
+          <li>Trap bar deadlift progression — 8–12 week build from light to working weight</li>
+          <li>Bulgarian split squat, farmers carries, heavy loaded step ups</li>
+          <li>Running reintroduction — walk/run intervals progressing to continuous running as tolerated</li>
+          <li>Assault bike and rowing — cardiovascular base rebuilt without axial compression</li>
+          <li>Hyrox-specific movement reintroduction — programmed and sequenced based on your response</li>
+          <li>Re-herniation prevention principles embedded permanently into training approach</li>
+        </ul>
+        <div class="phase-milestone">Milestone: Maximum strength symmetry achieved. Neurological symptoms minimized. Best possible athletic capacity restored. Aviation medical assessment prepared for.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- NERVE TRACKER -->
+<section class="nerve-section reveal">
+  <div class="section-tag">S1 Nerve Recovery</div>
+  <h2 class="section-title">The three things we <em>track</em> at every check-in</h2>
+  <p class="section-body">Your residual symptoms — burning, numbness, plantar flexion weakness — are nerve recovery indicators. We monitor these specifically and consistently. Any regression is a signal to reduce load immediately, not push through.</p>
+
+  <div class="nerve-grid">
+    <div class="nerve-item">
+      <div class="nerve-label">Indicator 01</div>
+      <div class="nerve-metric">Calf Raise Symmetry</div>
+      <div class="nerve-desc">Left vs right comparison. Most sensitive objective indicator of S1 motor recovery. Tracked every session.</div>
+    </div>
+    <div class="nerve-item">
+      <div class="nerve-label">Indicator 02</div>
+      <div class="nerve-metric">Sensation — Left Foot & Heel</div>
+      <div class="nerve-desc">Numbness and burning in the S1 dermatome. Gradual resolution expected over weeks to months as nerve recovers.</div>
+    </div>
+    <div class="nerve-item">
+      <div class="nerve-label">Indicator 03</div>
+      <div class="nerve-metric">Walking Tolerance</div>
+      <div class="nerve-desc">Duration without symptom provocation. Progressive improvement tracked as primary functional outcome measure.</div>
+    </div>
+  </div>
+</section>
+
+<!-- INVESTMENT -->
+<section class="investment-section reveal">
+  <div class="section-tag">The Investment</div>
+  <h2 class="section-title">Choose your <em>commitment level</em></h2>
+  <p class="section-body">Both options include fully individualized programming built around your specific MRI findings, surgical report, and athletic goals. Weekly check-ins, exercise video review, and direct access throughout.</p>
+
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="pricing-tier">Foundation</div>
+      <div class="pricing-amount">$3K</div>
+      <div class="pricing-period">6 months · Gets you functional</div>
+      <ul class="pricing-features">
+        <li>Phases 1 through 3 covered</li>
+        <li>Neural calming through posterior chain rebuilding</li>
+        <li>Return to gym-ready by end of program</li>
+        <li>Weekly programming and check-ins</li>
+        <li>Direct access via messaging</li>
+        <li>Exercise video review and feedback</li>
+      </ul>
+      <p class="pricing-note">Appropriate if your primary goal is pain-free daily function and return to light training.</p>
+    </div>
+    <div class="pricing-card featured">
+      <div class="pricing-badge">Recommended for Tariq</div>
+      <div class="pricing-tier">Full Recovery</div>
+      <div class="pricing-amount">$5K</div>
+      <div class="pricing-period">12 months · Gets you back to who you were</div>
+      <ul class="pricing-features">
+        <li>All four phases — complete recovery arc</li>
+        <li>Full athletic reconstruction through month 12</li>
+        <li>Hyrox and Crossfit return programming</li>
+        <li>S1 nerve recovery tracking every check-in</li>
+        <li>Aviation medical assessment — maximizing neurological recovery ahead of clearance</li>
+        <li>Weekly programming and check-ins</li>
+        <li>Direct access via messaging</li>
+        <li>Exercise video review and feedback</li>
+        <li>Re-herniation prevention built permanently in</li>
+      </ul>
+      <p class="pricing-note">The honest timeline for your goals. 6 months gets you functional. 12 months gives your nerve the full window to recover and gives your body the best possible chance of returning to the training you love — and staying there.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div>
+    <div class="footer-brand">Branden <span>Bryant</span></div>
+    <div class="footer-tagline">Rehab Coaching · Spinal Recovery</div>
+  </div>
+  <div class="footer-contact">
+    @brandenbryantfit<br>
+    Prepared exclusively for Tariq — May 2026
+  </div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
